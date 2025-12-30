@@ -1,0 +1,47 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: biens-service
+          uri: lb://biens-service
+          predicates:
+            - Path=/biens/**, /catalogue/biens/**
+        - id: clients-reservations-service
+          uri: lb://clients-reservations-service
+          predicates:
+            - Path=/reservations/**, /clients/**
+        - id: immobilier-api
+          uri: lb://immobilier-api
+          predicates:
+            - Path=/api/**, /catalogue/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: ${JWT_SECRET:change-me}
+          jws-algorithms: HS256
+security:
+  jwt:
+    issuer: immobilier-gateway
+    exp-minutes: 60
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+
