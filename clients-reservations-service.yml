@@ -46,3 +46,13 @@ eureka:
 mes-config-ms:
   commandes-last: 10
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
